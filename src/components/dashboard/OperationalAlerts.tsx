@@ -44,7 +44,7 @@ export default function OperationalAlerts() {
             <div
               key={i}
               className="relative flex flex-1 flex-col items-start justify-center gap-[10px] px-[20px] py-[14px]"
-              style={{ borderLeft: `3px solid ${style.border}` }}
+              style={{ boxShadow: `inset 3px 0 0 0 ${style.border}` }}
             >
               <span
                 className="relative inline-flex w-fit shrink-0 items-center gap-[6px] rounded-[99px] py-[2px] pl-[10px] pr-[12px] text-[12px] leading-[20px]"

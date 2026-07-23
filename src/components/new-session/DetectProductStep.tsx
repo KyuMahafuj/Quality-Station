@@ -1,16 +1,28 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, Check, Circle, ArrowLeft, LayoutGrid } from "lucide-react";
+import {
+  Sparkles,
+  Check,
+  Circle,
+  ArrowLeft,
+  LayoutGrid,
+  TestTube2,
+  Package,
+  Amphora,
+  Boxes,
+  Search,
+  type LucideIcon,
+} from "lucide-react";
 
 type Phase = "cameras" | "idle" | "analyzing" | "manual-category" | "manual-product";
 
 type ManualProduct = { name: string; subtitle: string; code: string };
 
-const CATEGORIES: { name: string; image?: string; products: ManualProduct[] }[] = [
+const CATEGORIES: { name: string; image?: string; icon?: LucideIcon; products: ManualProduct[] }[] = [
   {
     name: "Bottles",
-    image: "/products/dove-front.png",
+    image: "/products/category-bottles.png",
     products: [
       { name: "Clinic Plus", subtitle: "Clinic Plus Strong & Long 960x6ml", code: "-" },
       { name: "Dove", subtitle: "DV DLY SH Bio Protein CDHR 512x7ml", code: "DVRK2R0" },
@@ -21,6 +33,8 @@ const CATEGORIES: { name: string; image?: string; products: ManualProduct[] }[] 
   },
   {
     name: "Tubes",
+    image: "/products/category-tubes.png",
+    icon: TestTube2,
     products: [
       { name: "Clinic Plus", subtitle: "Clinic Plus Cream 75gm Tube", code: "CPTB075" },
       { name: "Fair & Lovely", subtitle: "F&L Advanced Multi Vitamin 50gm", code: "-" },
@@ -28,6 +42,8 @@ const CATEGORIES: { name: string; image?: string; products: ManualProduct[] }[] 
   },
   {
     name: "Sachets",
+    image: "/products/category-sachets.png",
+    icon: Package,
     products: [
       { name: "Sunsilk", subtitle: "SS Sachet 6ml x 500 Pack", code: "SSSC6ML" },
       { name: "Clinic Plus", subtitle: "CP Sachet 5ml x 500 Pack", code: "-" },
@@ -35,12 +51,23 @@ const CATEGORIES: { name: string; image?: string; products: ManualProduct[] }[] 
   },
   {
     name: "Jars",
+    image: "/products/category-jars.png",
+    icon: Amphora,
     products: [{ name: "Glow & Lovely", subtitle: "GAL 50gm Advanced Multivitamin Jar", code: "GAL50JR" }],
   },
   {
     name: "Others",
+    icon: Boxes,
     products: [{ name: "Custom Product", subtitle: "Manually specified / unlisted SKU", code: "-" }],
   },
+];
+
+const PRODUCT_REFERENCE = [
+  { label: "Category", value: "Bottles" },
+  { label: "Weight", value: "500 gms" },
+  { label: "MRP", value: "₹200" },
+  { label: "Batch No", value: "BSH-012123232" },
+  { label: "Factory Code", value: "B016" },
 ];
 
 const CHECKLIST = [
@@ -77,13 +104,17 @@ const CAMERAS: CamTile[] = [
 ];
 
 function CornerBrackets() {
-  const base = "absolute h-4 w-4 border-[var(--text-faint)]/50";
+  const bar = "absolute bg-[var(--text-faint)]/50";
   return (
     <>
-      <span className={`${base} left-2 top-2 border-l-2 border-t-2`} />
-      <span className={`${base} right-2 top-2 border-r-2 border-t-2`} />
-      <span className={`${base} bottom-2 left-2 border-b-2 border-l-2`} />
-      <span className={`${base} bottom-2 right-2 border-b-2 border-r-2`} />
+      <span className={`${bar} left-2 top-2 h-3 w-0.5`} />
+      <span className={`${bar} left-2 top-2 h-0.5 w-3`} />
+      <span className={`${bar} right-2 top-2 h-3 w-0.5`} />
+      <span className={`${bar} right-2 top-2 h-0.5 w-3`} />
+      <span className={`${bar} bottom-2 left-2 h-3 w-0.5`} />
+      <span className={`${bar} bottom-2 left-2 h-0.5 w-3`} />
+      <span className={`${bar} bottom-2 right-2 h-3 w-0.5`} />
+      <span className={`${bar} bottom-2 right-2 h-0.5 w-3`} />
     </>
   );
 }
@@ -126,7 +157,7 @@ function CameraTile({ cam }: { cam: CamTile }) {
           </>
         ) : (
           <div className="flex flex-col items-center gap-2 text-white/30">
-            <div className="h-16 w-10 rounded-md border border-dashed border-white/25" />
+            <div className="h-16 w-10 rounded-md bg-white/10" />
             <span className="text-[10px] uppercase tracking-wider">Searching&hellip;</span>
           </div>
         )}
@@ -146,6 +177,7 @@ export default function DetectProductStep({ onComplete }: { onComplete: () => vo
   const [completedSteps, setCompletedSteps] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<ManualProduct | null>(null);
+  const [productSearch, setProductSearch] = useState("");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -211,18 +243,44 @@ export default function DetectProductStep({ onComplete }: { onComplete: () => vo
 
       {phase === "idle" && (
         <>
-          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl bg-[var(--bg-card)] shadow-[var(--shadow-card)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/products/dove-front.png"
-              alt="Detected product"
-              className="max-h-[70%] w-auto object-contain drop-shadow-md"
-            />
-            {selectedProduct && (
-              <div className="rounded-full bg-[var(--bg-inset)] px-4 py-1.5 text-sm font-medium text-[var(--text-primary)]">
-                {selectedProduct.name} <span className="text-[var(--text-muted)]">&middot; {selectedCategory}</span>
+          <div className="flex min-h-0 flex-1 flex-col rounded-xl bg-[var(--bg-card)] p-6 shadow-[var(--shadow-card)]">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-semibold text-[var(--text-primary)]">Detected Product</h2>
+              {selectedProduct && (
+                <div className="rounded-full bg-[var(--info-bg)] px-3 py-1 text-xs font-medium text-[var(--accent-blue)]">
+                  {selectedProduct.name} &middot; {selectedCategory}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 grid min-h-0 flex-1 grid-cols-2 gap-6">
+              <div className="flex items-center justify-center rounded-lg bg-[var(--bg-page)] p-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/products/dove-front.png"
+                  alt="Detected product"
+                  className="h-[280px] w-auto object-contain drop-shadow-md"
+                />
               </div>
-            )}
+              <div className="flex flex-col items-center justify-center gap-5 text-center">
+                <div>
+                  <div className="text-lg font-semibold text-[var(--text-primary)]">
+                    {selectedProduct?.name ?? "Dove"} Shampoo 180ml
+                  </div>
+                  <div className="mt-1 text-sm text-[var(--text-muted)]">
+                    {selectedCategory ?? "Bottles"} &middot; SKU {selectedProduct?.code ?? "DVRK2R0"}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {PRODUCT_REFERENCE.map((row) => (
+                    <div key={row.label} className="rounded-lg bg-[var(--bg-page)] p-3 text-center">
+                      <div className="text-xs text-[var(--text-muted)]">{row.label}</div>
+                      <div className="mt-1 text-sm font-semibold text-[var(--text-primary)]">{row.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
           <div className="mt-6 flex shrink-0 items-center justify-center gap-3">
             <button
@@ -259,28 +317,32 @@ export default function DetectProductStep({ onComplete }: { onComplete: () => vo
             <p className="mt-1 text-sm text-[var(--text-muted)]">
               Choose the category to narrow down the product list.
             </p>
-            <div className="mt-6 grid flex-1 grid-cols-2 gap-4 md:grid-cols-3 auto-rows-[180px]">
+            <div className="mt-6 grid flex-1 grid-cols-3 content-start gap-4 overflow-y-auto">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.name}
                   type="button"
                   onClick={() => {
                     setSelectedCategory(cat.name);
+                    setProductSearch("");
                     setPhase("manual-product");
                   }}
-                  className="flex flex-col items-center justify-center gap-3 rounded-xl bg-[var(--bg-inset)] p-6 text-center shadow-[0_0_0_1px_var(--border-subtle)] transition-colors hover:bg-[var(--bg-card-hover)]"
+                  className="flex flex-col items-center gap-3 rounded-2xl bg-[var(--bg-card-hover)] px-3.5 py-6 shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--bg-inset)]"
                 >
-                  <span className="flex h-14 w-14 items-center justify-center">
+                  <span className="text-xl font-semibold text-[var(--text-primary)]">{cat.name}</span>
+                  <span className="flex h-[132px] w-full items-center justify-center">
                     {cat.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={cat.image} alt="" className="h-14 w-auto object-contain" />
+                      <img src={cat.image} alt="" className="h-full w-full object-contain" />
                     ) : (
-                      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--bg-card-hover)] text-[var(--text-muted)]">
-                        <LayoutGrid className="h-5 w-5" />
+                      <span className="flex h-[90px] w-[90px] items-center justify-center rounded-[20px] bg-[var(--bg-inset)] text-[var(--text-muted)]">
+                        {(() => {
+                          const Icon = cat.icon ?? LayoutGrid;
+                          return <Icon className="h-[45px] w-[45px]" strokeWidth={1.5} />;
+                        })()}
                       </span>
                     )}
                   </span>
-                  <span className="text-sm font-semibold text-[var(--text-primary)]">{cat.name}</span>
                 </button>
               ))}
             </div>
@@ -299,95 +361,152 @@ export default function DetectProductStep({ onComplete }: { onComplete: () => vo
               <ArrowLeft className="h-4 w-4" />
               Back
             </button>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-              Select Product &middot; <span className="text-[var(--text-muted)]">{selectedCategory}</span>
-            </h2>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">Choose the exact product for this session.</p>
-            <div className="mt-6 grid flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
-              {(CATEGORIES.find((c) => c.name === selectedCategory)?.products ?? []).map((product) => (
-                <button
-                  key={product.name + product.subtitle}
-                  type="button"
-                  onClick={() => {
-                    setSelectedProduct(product);
-                    setPhase("idle");
-                  }}
-                  className="flex flex-col items-start gap-3 rounded-xl bg-[var(--bg-inset)] p-5 text-left shadow-[0_0_0_1px_var(--border-subtle)] transition-colors hover:bg-[var(--bg-card-hover)]"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/products/dove-front.png" alt="" className="h-10 w-auto object-contain" />
-                  <div>
-                    <div className="text-sm font-semibold text-[var(--text-primary)]">{product.name}</div>
-                    <div className="mt-0.5 text-xs text-[var(--text-muted)]">{product.subtitle}</div>
-                    <div className="mt-1 text-xs text-[var(--text-faint)]">{product.code}</div>
-                  </div>
-                </button>
-              ))}
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                  Select Product &middot; <span className="text-[var(--text-muted)]">{selectedCategory}</span>
+                </h2>
+                <p className="mt-1 text-sm text-[var(--text-muted)]">Choose the exact product for this session.</p>
+              </div>
+              <div className="relative w-64 shrink-0">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-faint)]" />
+                <input
+                  type="text"
+                  value={productSearch}
+                  onChange={(e) => setProductSearch(e.target.value)}
+                  placeholder="Search products..."
+                  className="w-full rounded-lg bg-[var(--bg-inset)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-faint)] focus:shadow-[0_0_0_2px_var(--accent-blue)]"
+                />
+              </div>
             </div>
+            {(() => {
+              const category = CATEGORIES.find((c) => c.name === selectedCategory);
+              const query = productSearch.trim().toLowerCase();
+              const filteredProducts = (category?.products ?? []).filter(
+                (product) =>
+                  !query ||
+                  product.name.toLowerCase().includes(query) ||
+                  product.subtitle.toLowerCase().includes(query) ||
+                  product.code.toLowerCase().includes(query)
+              );
+
+              if (filteredProducts.length === 0) {
+                return (
+                  <div className="mt-6 flex flex-1 items-center justify-center text-sm text-[var(--text-faint)]">
+                    No products match &ldquo;{productSearch}&rdquo;.
+                  </div>
+                );
+              }
+
+              return (
+                <div className="mt-6 grid flex-1 grid-cols-3 content-start gap-4 overflow-y-auto">
+                  {filteredProducts.map((product) => {
+                    const image = selectedCategory === "Bottles" ? "/products/dove-front.png" : category?.image;
+                    const Icon = category?.icon ?? LayoutGrid;
+                    return (
+                  <button
+                    key={product.name + product.subtitle}
+                    type="button"
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      setPhase("idle");
+                    }}
+                    className="flex flex-col items-center gap-3 rounded-2xl bg-[var(--bg-card-hover)] px-3.5 py-6 text-center shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--bg-inset)]"
+                  >
+                    <span className="text-base font-semibold text-[var(--text-primary)]">{product.name}</span>
+                    <span className="flex h-[110px] w-full items-center justify-center">
+                      {image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={image} alt="" className="h-full w-full object-contain" />
+                      ) : (
+                        <span className="flex h-[76px] w-[76px] items-center justify-center rounded-2xl bg-[var(--bg-inset)] text-[var(--text-muted)]">
+                          <Icon className="h-9 w-9" strokeWidth={1.5} />
+                        </span>
+                      )}
+                    </span>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <div className="text-xs text-[var(--text-muted)]">{product.subtitle}</div>
+                      <div className="text-xs text-[var(--text-faint)]">{product.code}</div>
+                    </div>
+                  </button>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
         </>
       )}
 
       {phase === "analyzing" && (
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center rounded-xl bg-[var(--bg-card)] p-10 shadow-[var(--shadow-card)]">
-          <div className="flex w-full max-w-3xl items-center justify-center gap-16">
-            <div className="flex flex-col items-center">
+        <div className="flex min-h-0 flex-1 flex-col rounded-xl bg-[var(--bg-card)] p-6 shadow-[var(--shadow-card)]">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold text-[var(--text-primary)]">Analyzing Product</h2>
+            <span className="rounded-full bg-[var(--info-bg)] px-3 py-1 text-xs font-medium text-[var(--accent-blue)]">
+              {progress}% complete
+            </span>
+          </div>
+
+          <div className="mt-4 grid min-h-0 flex-1 grid-cols-2 gap-6">
+            <div className="flex flex-col items-center justify-center gap-4 rounded-lg bg-[var(--bg-page)] p-6">
               <div className="relative overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/products/dove-front.png"
                   alt="Analyzing product"
-                  className="h-[260px] w-auto object-contain"
+                  className="h-[240px] w-auto object-contain drop-shadow-md"
                 />
                 <div
                   className="absolute left-0 right-0 h-[2px] bg-[var(--accent-blue)] shadow-[0_0_12px_var(--accent-blue)] transition-[top] duration-150 ease-linear"
                   style={{ top: `${progress}%` }}
                 />
               </div>
-              <div className="mt-4 text-2xl font-bold text-[var(--text-primary)]">{progress}%</div>
+              <div className="text-2xl font-bold text-[var(--text-primary)]">{progress}%</div>
             </div>
 
-            <ul className="flex flex-col gap-4">
-              {CHECKLIST.map((label, i) => {
-                const isChecked = i < completedSteps;
-                const isCurrent = i === completedSteps;
-                return (
-                  <li key={label} className="flex items-center gap-3">
-                    {isChecked ? (
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--success)] text-white">
-                        <Check className="h-3.5 w-3.5" />
-                      </span>
-                    ) : (
-                      <Circle
-                        className={`h-5 w-5 ${
-                          isCurrent ? "text-[var(--accent-blue)]" : "text-[var(--text-faint)]"
+            <div className="flex flex-col items-center justify-center gap-6 text-center">
+              <ul className="flex w-fit flex-col gap-4">
+                {CHECKLIST.map((label, i) => {
+                  const isChecked = i < completedSteps;
+                  const isCurrent = i === completedSteps;
+                  return (
+                    <li key={label} className="flex items-center gap-3">
+                      {isChecked ? (
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--success)] text-white">
+                          <Check className="h-3.5 w-3.5" />
+                        </span>
+                      ) : (
+                        <Circle
+                          className={`h-5 w-5 ${
+                            isCurrent ? "text-[var(--accent-blue)]" : "text-[var(--text-faint)]"
+                          }`}
+                        />
+                      )}
+                      <span
+                        className={`text-sm ${
+                          isChecked || isCurrent
+                            ? "font-medium text-[var(--text-primary)]"
+                            : "text-[var(--text-faint)]"
                         }`}
-                      />
-                    )}
-                    <span
-                      className={`text-sm ${
-                        isChecked || isCurrent
-                          ? "font-medium text-[var(--text-primary)]"
-                          : "text-[var(--text-faint)]"
-                      }`}
-                    >
-                      {label}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+                      >
+                        {label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
 
-          <div className="mt-10 flex shrink-0 flex-col items-center gap-2">
-            <p className="text-sm text-[var(--text-muted)]">Please wait while we analyze the product</p>
-            <button
-              type="button"
-              onClick={stopAnalyzing}
-              className="text-sm font-medium text-[var(--danger)] hover:underline"
-            >
-              Stop analyzing
-            </button>
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-sm text-[var(--text-muted)]">Please wait while we analyze the product</p>
+                <button
+                  type="button"
+                  onClick={stopAnalyzing}
+                  className="w-fit text-sm font-medium text-[var(--danger)] hover:underline"
+                >
+                  Stop analyzing
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

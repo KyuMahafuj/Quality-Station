@@ -32,7 +32,7 @@ function CustomTooltip({
   const acceptedPct = total ? ((datum.accepted / total) * 100).toFixed(1) : "0";
   const rejectedPct = total ? ((datum.rejected / total) * 100).toFixed(1) : "0";
   return (
-    <div className="rounded-lg border border-[var(--border-strong)] bg-[var(--bg-card-hover)] px-4 py-3 text-xs shadow-xl">
+    <div className="rounded-lg bg-[var(--bg-card-hover)] px-4 py-3 text-xs shadow-[var(--shadow-card-strong)]">
       <div className="font-semibold text-[var(--text-primary)]">{label}</div>
       <div className="mt-2 flex items-center justify-between gap-6 text-[var(--text-muted)]">
         <span>Total</span>
