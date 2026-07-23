@@ -25,7 +25,7 @@ export default function NewSessionPage() {
             <DetectProductStep onComplete={() => setStep(2)} />
           </div>
         ) : (
-          <div className="min-h-0 flex-1 overflow-y-auto pb-10">
+          <div className="min-h-0 flex-1">
             <ValidateDetailsStep onSubmit={() => router.push("/")} />
           </div>
         )}

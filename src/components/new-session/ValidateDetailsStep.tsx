@@ -188,7 +188,7 @@ function ImagePanel({
 }) {
   return (
     <div
-      className={`flex flex-1 items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-inset)] p-6 ${className}`}
+      className={`flex flex-1 items-center justify-center rounded-lg bg-[var(--bg-page)] p-6 ${className}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt} className="h-[260px] w-auto rounded-lg object-contain drop-shadow-md" />
@@ -269,7 +269,8 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
   }
 
   return (
-    <div className="flex flex-col gap-5 px-8 pb-10 pt-6">
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-8 pb-6 pt-6">
       {/* Summary header row */}
       <div className="flex items-center justify-between rounded-xl bg-[var(--bg-card)] px-6 py-4 shadow-[var(--shadow-card)]">
         <div className="flex items-center gap-4">
@@ -305,7 +306,7 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
         />
         {expandedKey === "ocr" && (
           <div className="flex flex-col gap-6 px-6 pb-6 lg:flex-row">
-            <div className="flex-[1.6] overflow-x-auto rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-inset)]">
+            <div className="flex-[1.6] overflow-x-auto rounded-lg">
               <table className="w-full min-w-[620px] text-sm">
                 <thead>
                   <tr className="text-left text-xs font-medium uppercase tracking-wide text-[var(--text-faint)]">
@@ -318,7 +319,7 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
                 </thead>
                 <tbody>
                   {(editing.ocr ? ocrDraft : ocrRows).map((row, i) => (
-                    <tr key={row.field + i} className="shadow-[0_-1px_0_0_var(--border-subtle)]">
+                    <tr key={row.field + i}>
                       <td className="px-4 py-3 font-medium text-[var(--text-primary)]">{row.field}</td>
                       <td className="px-4 py-3 text-[var(--text-muted)]">{row.reference}</td>
                       <td className={`px-4 py-3 ${row.status === "mismatch" && !editing.ocr ? "font-medium text-[var(--danger)]" : "text-[var(--text-muted)]"}`}>
@@ -372,7 +373,7 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
         />
         {expandedKey === "defects" && (
           <div className="flex flex-col gap-6 px-6 pb-6 lg:flex-row">
-            <div className="flex-[1.4] overflow-x-auto rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-inset)]">
+            <div className="flex-[1.4] overflow-x-auto rounded-lg">
               <table className="w-full min-w-[520px] text-sm">
                 <thead>
                   <tr className="text-left text-xs font-medium uppercase tracking-wide text-[var(--text-faint)]">
@@ -385,7 +386,7 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
                 </thead>
                 <tbody>
                   {(editing.defects ? defectDraft : defectRows).map((row, i) => (
-                    <tr key={row.defect + i} className="shadow-[0_-1px_0_0_var(--border-subtle)]">
+                    <tr key={row.defect + i}>
                       <td className="px-4 py-3 font-medium text-[var(--text-primary)]">{row.defect}</td>
                       <td className="px-4 py-3 text-[var(--text-muted)]">
                         {editing.defects ? (
@@ -433,7 +434,7 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
               </table>
             </div>
 
-            <div className="flex flex-1 flex-col gap-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-inset)] p-4">
+            <div className="flex flex-1 flex-col gap-4 rounded-lg bg-[var(--bg-page)] p-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex flex-1 items-center gap-1 rounded-lg bg-[var(--bg-card)] p-1 shadow-[0_0_0_1px_var(--border-subtle)]">
                   {VIEW_ANGLES.map((angle) => {
@@ -496,7 +497,7 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
         />
         {expandedKey === "weight" && (
           <div className="flex flex-col gap-6 px-6 pb-6 lg:flex-row">
-            <div className="flex-[1.6] overflow-x-auto rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-inset)]">
+            <div className="flex-[1.6] overflow-x-auto rounded-lg">
               <table className="w-full min-w-[560px] text-sm">
                 <thead>
                   <tr className="text-left text-xs font-medium uppercase tracking-wide text-[var(--text-faint)]">
@@ -509,7 +510,7 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
                 </thead>
                 <tbody>
                   {(editing.weight ? weightDraft : weightRows).map((row, i) => (
-                    <tr key={row.field + i} className="shadow-[0_-1px_0_0_var(--border-subtle)]">
+                    <tr key={row.field + i}>
                       <td className="px-4 py-3 font-medium text-[var(--text-primary)]">{row.field}</td>
                       <td className="px-4 py-3 text-[var(--text-muted)]">
                         {row.reference}
@@ -553,8 +554,9 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
           </div>
         )}
       </div>
+      </div>
 
-      <div className="flex justify-end pt-2">
+      <div className="flex shrink-0 justify-end bg-[var(--bg-page)] px-8 py-4 shadow-[var(--shadow-card-strong)]">
         <button
           type="button"
           onClick={onSubmit}
