@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f6f9;
+  --foreground: #0d1220;
+
+  --bg-page: #f5f6f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f0f2f6;
+  --bg-inset: #eef0f5;
+  --border-subtle: #e2e5ec;
+  --border-strong: #cbd2de;
+  --text-primary: #0d1220;
+  --text-muted: #566076;
+  --text-faint: #8892a6;
+  --scrollbar-thumb: #cbd2de;
+
+  --accent-blue: #0155fb;
+  --success: #027a48;
+  --danger: #eb6358;
+  --warning: #d07601;
+  --danger-bg: #fdeceb;
+  --warning-bg: #fdf1e2;
+  --info-bg: #e7edfd;
+  --info-text: #0155fb;
+
+  --shadow-card: 0px 0px 1px 0px rgba(16,24,40,0.06), 0px 1px 2px 0px rgba(16,24,40,0.06), 0px 1px 3px 0px rgba(16,24,40,0.1);
+  --shadow-card-strong: 0px 1px 2px 0px rgba(16,24,40,0.08), 0px 2px 6px 0px rgba(16,24,40,0.1);
+
+  --alert-critical: #d92d20;
+  --alert-critical-bg: #fdeceb;
+  --alert-warning: #b54708;
+  --alert-warning-bg: #fdf1e2;
+  --pill-blue-bg: rgba(52,119,252,0.16);
+  --pill-blue-text: #2a5fd6;
+  --alert-cell-tint: rgba(0,0,0,0.04);
+}
+
+.dark {
+  --background: #0a0e1a;
+  --foreground: #f0f3f9;
+
+  --bg-page: #0a0e1a;
+  --bg-card: #12151f;
+  --bg-card-hover: #181c2a;
+  --bg-inset: #1e2334;
+  --border-subtle: #222737;
+  --border-strong: #334155;
+  --text-primary: #f0f3f9;
+  --text-muted: #7a8ba3;
+  --text-faint: #667085;
+  --scrollbar-thumb: #2b324b;
+
+  --accent-blue: #0155fb;
+  --success: #027a48;
+  --danger: #eb6358;
+  --warning: #d07601;
+  --danger-bg: #3a1f22;
+  --warning-bg: #3a2a12;
+  --info-bg: #1e2a4d;
+  --info-text: #7ea6f7;
+
+  --shadow-card: 0px 0px 1px 0px rgba(255,255,255,0.45), 0px 1px 2px 0px rgba(16,24,40,0.06), 0px 1px 3px 0px rgba(16,24,40,0.1);
+  --shadow-card-strong: 0px 1px 3px 0px rgba(0,0,0,0.4), 0px 4px 10px 0px rgba(0,0,0,0.35);
+
+  --alert-critical: #f97066;
+  --alert-critical-bg: rgba(249,112,102,0.16);
+  --alert-warning: #f77f00;
+  --alert-warning-bg: rgba(247,127,0,0.16);
+  --pill-blue-bg: rgba(52,119,252,0.16);
+  --pill-blue-text: #6a9cff;
+  --alert-cell-tint: rgba(0,0,0,0.28);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-poppins);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
 }
