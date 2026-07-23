@@ -710,7 +710,7 @@ export default function ValidateDetailsStep({ onSubmit }: { onSubmit: () => void
         </div>
       </div>
 
-      <div className="flex shrink-0 justify-end bg-[var(--bg-page)] px-8 py-4 shadow-[var(--shadow-card-strong)]">
+      <div className="flex shrink-0 justify-end bg-[var(--bg-page)] px-8 py-4">
         <button
           type="button"
           onClick={onSubmit}

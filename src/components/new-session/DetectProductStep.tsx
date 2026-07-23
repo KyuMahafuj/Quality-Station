@@ -496,18 +496,21 @@ export default function DetectProductStep({ onComplete }: { onComplete: () => vo
                 })}
               </ul>
 
-              <div className="flex flex-col items-center gap-2">
-                <p className="text-sm text-[var(--text-muted)]">Please wait while we analyze the product</p>
-                <button
-                  type="button"
-                  onClick={stopAnalyzing}
-                  className="w-fit text-sm font-medium text-[var(--danger)] hover:underline"
-                >
-                  Stop analyzing
-                </button>
-              </div>
+              <p className="text-sm text-[var(--text-muted)]">Please wait while we analyze the product</p>
             </div>
           </div>
+        </div>
+      )}
+
+      {phase === "analyzing" && (
+        <div className="mt-6 flex shrink-0 items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={stopAnalyzing}
+            className="flex items-center gap-2 rounded-lg bg-[var(--bg-inset)] px-4 py-2.5 text-sm font-medium text-[var(--danger)] hover:bg-[var(--danger-bg)]"
+          >
+            Stop analyzing
+          </button>
         </div>
       )}
     </div>
